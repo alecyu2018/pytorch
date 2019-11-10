@@ -54,6 +54,21 @@ if (NOT BUILD_ATEN_MOBILE)
   ENDIF()
   SET(VCOMP_LIB "vcomp")
 
+# ---[ VS2019 specific
+# Fix Visual C++ Command line error D8016: '/Ox' and '/RTC1' command-line options are incompatible
+  IF(MSVC)
+    foreach(flag_var
+        CMAKE_C_FLAGS CMAKE_C_FLAGS_DEBUG CMAKE_C_FLAGS_RELEASE
+        CMAKE_C_FLAGS_MINSIZEREL CMAKE_C_FLAGS_RELWITHDEBINFO
+        CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
+        CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO)
+      if(${flag_var} MATCHES "/RTC1")
+        SET(OPT_FLAG " ")
+        SET(VCOMP_LIB "vcompd")
+      endif(${flag_var} MATCHES "/RTC1")
+    endforeach(flag_var)
+  ENDIF()
+
   IF("${CMAKE_BUILD_TYPE}" MATCHES "Debug")
     SET(OPT_FLAG " ")
     SET(VCOMP_LIB "vcompd")
